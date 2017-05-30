@@ -28,7 +28,7 @@ def calculate_merger_history(sfr_history, sm_history, cosmic_age_array):
     raise NotImplementedError("Not implemented yet")
 
 
-def calculate_disruption_prob_history(*args):
+def calculate_disruption_prob_history(*args, **kwargs):
     """
     """
     raise NotImplementedError("Not implemented yet")
