@@ -51,3 +51,7 @@ distribute-*.tar.gz
 
 # Mac OSX
 .DS_Store
+
+# Random Jupyter notebooks
+Untitled*.ipynb
+
