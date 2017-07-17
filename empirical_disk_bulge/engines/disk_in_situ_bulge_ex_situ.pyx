@@ -3,7 +3,9 @@
 cimport cython
 import numpy as np
 cimport numpy as cnp
-from ..sfr_integration import _stellar_mass_integrand_factors, _index_of_nearest_larger_redshift
+from ..sfr_integration import (_stellar_mass_integrand_factors,
+        _index_of_nearest_larger_redshift, bolplanck_redshifts)
+
 
 __all__ = ('disk_in_situ_bulge_ex_situ_engine', )
 
@@ -18,7 +20,7 @@ def disk_in_situ_bulge_ex_situ_engine(double[:, :] in_situ_sfr_history,
     """
     #  dt_arr stores the array of time steps
     #  frac_remaining_arr the mass loss fraction due to stellar evolution
-    idx_zobs = _index_of_nearest_larger_redshift(redshift_obs)
+    idx_zobs = _index_of_nearest_larger_redshift(redshift_obs, bolplanck_redshifts)
     _dt, _frac_remaining = _stellar_mass_integrand_factors(
             cosmic_age_array[idx_zobs], cosmic_age_array)
     cdef double[:] dt_arr = np.array(_dt, dtype='f8', order='C')
