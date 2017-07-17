@@ -2,7 +2,7 @@ from distutils.extension import Extension
 import os
 
 PATH_TO_PKG = os.path.relpath(os.path.dirname(__file__))
-SOURCES = ('disk_bulge_simple_disruption_engine.pyx', )
+SOURCES = ('disk_bulge_simple_disruption_engine.pyx', 'disk_in_situ_bulge_ex_situ.pyx')
 THIS_PKG_NAME = '.'.join(__name__.split('.')[:-1])
 
 

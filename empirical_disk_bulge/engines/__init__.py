@@ -1,1 +1,2 @@
 from .disk_bulge_simple_disruption_engine import disk_bulge_simple_disruption_engine
+from .disk_in_situ_bulge_ex_situ import disk_in_situ_bulge_ex_situ_engine
