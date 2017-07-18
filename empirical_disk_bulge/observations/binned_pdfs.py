@@ -101,10 +101,13 @@ def sfr_sequence_bulge_disk_fractions_vs_sm(bt, sm, ssfr,
 
     frac_disk_dom_all, frac_bulge_dom_all = bulge_disk_fractions_vs_sm(
             bt, sm, sm_abscissa, domination_vals, sigma_sm)
+
     frac_disk_dom_sfs, frac_bulge_dom_sfs = bulge_disk_fractions_vs_sm(
             sfs_bt, sfs_sm, sm_abscissa, domination_vals, sigma_sm)
+
     frac_disk_dom_gv, frac_bulge_dom_gv = bulge_disk_fractions_vs_sm(
             gv_bt, gv_sm, sm_abscissa, domination_vals, sigma_sm)
+
     frac_disk_dom_q, frac_bulge_dom_q = bulge_disk_fractions_vs_sm(
             q_bt, q_sm, sm_abscissa, domination_vals, sigma_sm)
 
