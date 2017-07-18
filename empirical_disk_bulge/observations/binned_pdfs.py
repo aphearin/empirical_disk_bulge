@@ -69,6 +69,8 @@ def bulge_disk_fractions_vs_sm(bt, sm, sm_abscissa, domination_vals, sigma_sm):
     for i, sm_mid in enumerate(sm_abscissa):
         sm_mask = gaussian_kernel_selection(sm, sm_mid, sigma_sm)
         nbin_total = np.count_nonzero(sm_mask)
+        msg = "Bin #{0} with M*~{1:.2f} has {2} galaxies"
+        assert nbin_total > 25, msg.format(i, sm_mid, nbin_total)
         nbin_disk_dom = np.count_nonzero(bt[sm_mask] < domination_vals[0])
         nbin_bulge_dom = np.count_nonzero(bt[sm_mask] > domination_vals[1])
 
