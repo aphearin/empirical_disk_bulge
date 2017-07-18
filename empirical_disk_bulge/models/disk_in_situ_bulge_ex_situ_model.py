@@ -2,34 +2,25 @@
 """
 import numpy as np
 
-from .engines import disk_bulge_simple_disruption_engine as disk_bulge_engine
 from .engines import disk_in_situ_bulge_ex_situ_engine
 
 
-__all__ = ('disk_bulge_simple_disruption', )
+__all__ = ('bt_disk_in_situ_bulge_ex_situ', )
 
 
-def disk_bulge_simple_disruption(sfr_history, sm_history,
-        disruption_prob_history, cosmic_age_array, redshift_obs, frac_migration_array):
+def bt_disk_in_situ_bulge_ex_situ(sfr_history, merger_history, cosmic_age_array, zobs):
     """
+    Examples
+    --------
+    >>> ngals, ntimes = 100, 178
+    >>> sfr_history = np.random.random((ngals, ntimes))
+    >>> merger_history = np.random.random((ngals, ntimes))
+    >>> cosmic_age_array = np.linspace(0.1, 14, ntimes)
+    >>> zobs = 0.1
+    >>> result = bt_disk_in_situ_bulge_ex_situ(sfr_history, merger_history, cosmic_age_array, zobs)
     """
-    merger_history = calculate_merger_history(sfr_history, sm_history)
-    disruption_prob_history = calculate_disruption_prob_history()
+    sm_decomposition = np.array(
+        disk_in_situ_bulge_ex_situ_engine(sfr_history, merger_history, cosmic_age_array, zobs))
+    sm_disk, sm_bulge = sm_decomposition[:, 0], sm_decomposition[:, 1]
+    return sm_bulge/(sm_disk+sm_bulge)
 
-    sm_decomposition = np.array(disk_bulge_engine(
-        sfr_history, merger_history, disruption_prob_history,
-        frac_migration_array, cosmic_age_array, redshift_obs))
-    disk, bulge = sm_decomposition[:, 0], sm_decomposition[:, 1]
-    return disk, bulge
-
-
-def calculate_merger_history(sfr_history, sm_history, cosmic_age_array):
-    """
-    """
-    raise NotImplementedError("Not implemented yet")
-
-
-def calculate_disruption_prob_history(*args, **kwargs):
-    """
-    """
-    raise NotImplementedError("Not implemented yet")
