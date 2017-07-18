@@ -9,11 +9,10 @@ def _cosmic_age_array_midpoints(arr):
     return np.insert(midpoints, 0, midpoints[0])
 
 
-def in_situ_stellar_mass(sfr_history, t, kernel=None):
+def in_situ_stellar_mass(sfr_history, cosmic_age_array, t, kernel=None):
     """ Calculate the total stellar mass at time t
     by integrating the input in-situ SFR history,
     accounting for mass-loss due to passive evolution.
-
     Parameters
     ----------
     sfr_history : ndarray
@@ -32,7 +31,7 @@ def in_situ_stellar_mass(sfr_history, t, kernel=None):
     stellar_mass : ndarray
         Numpy array of shape (num_gals, )
     """
-    dt, frac_remaining = _stellar_mass_integrand_factors(t)
+    dt, frac_remaining = _stellar_mass_integrand_factors(t, cosmic_age_array)
     integrand = sfr_history[:, :len(dt)] * dt * frac_remaining
     if kernel is not None:
         integrand = integrand * kernel
