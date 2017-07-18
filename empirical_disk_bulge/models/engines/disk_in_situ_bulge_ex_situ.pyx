@@ -5,6 +5,7 @@ import numpy as np
 cimport numpy as cnp
 from ..sfr_integration import (_stellar_mass_integrand_factors,
         _index_of_nearest_larger_redshift, bolplanck_redshifts)
+from libc.math cimport fmax as c_fmax
 
 
 __all__ = ('disk_in_situ_bulge_ex_situ_engine', )
@@ -15,7 +16,7 @@ __all__ = ('disk_in_situ_bulge_ex_situ_engine', )
 @cython.wraparound(False)
 @cython.nonecheck(False)
 def disk_in_situ_bulge_ex_situ_engine(double[:, :] in_situ_sfr_history,
-        double[:, :] merging_history, cosmic_age_array, redshift_obs):
+        double[:, :] dsm_main_prog, cosmic_age_array, redshift_obs):
     """
     """
     #  dt_arr stores the array of time steps
@@ -34,7 +35,7 @@ def disk_in_situ_bulge_ex_situ_engine(double[:, :] in_situ_sfr_history,
 
     #  Declare output array and loop variables
     cdef double[:, :] disk_bulge_result = np.zeros((num_gals, 2), dtype='f8', order='C')
-    cdef double sm_bulge, sm_disk
+    cdef double sm_bulge, sm_disk, dsm_mergers
     cdef int igal, itime
 
     #  Declare variables needed by the model
@@ -55,12 +56,12 @@ def disk_in_situ_bulge_ex_situ_engine(double[:, :] in_situ_sfr_history,
             frac_remaining = frac_remaining_arr[itime]
 
             #  Add all in-situ SFR into the disk
-            in_situ_dsm = in_situ_sfr_history[igal, itime]*dt*frac_remaining*1e9
-            sm_disk += in_situ_dsm
+            in_situ_dsm = in_situ_sfr_history[igal, itime]*dt*1e9
+            sm_disk += in_situ_dsm*frac_remaining
 
             #  Add all mergers into the bulge
-            merging_dsm = merging_history[igal, itime]
-            sm_bulge += merging_dsm
+            dsm_mergers = c_fmax(0., dsm_main_prog[igal, itime] - in_situ_dsm)
+            sm_bulge += dsm_mergers*frac_remaining
 
         #  Update the output arrays before moving on to the next galaxy
         disk_bulge_result[igal, 0] = sm_disk

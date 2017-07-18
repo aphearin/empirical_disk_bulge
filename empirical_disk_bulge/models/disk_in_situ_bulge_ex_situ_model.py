@@ -8,7 +8,7 @@ from .engines import disk_in_situ_bulge_ex_situ_engine
 __all__ = ('disk_in_situ_bulge_ex_situ_decomposition', )
 
 
-def disk_in_situ_bulge_ex_situ_decomposition(sfr_history, merger_history, cosmic_age_array, zobs):
+def disk_in_situ_bulge_ex_situ_decomposition(sfr_history, sm_history, cosmic_age_array, zobs):
     """
     Examples
     --------
@@ -19,8 +19,9 @@ def disk_in_situ_bulge_ex_situ_decomposition(sfr_history, merger_history, cosmic
     >>> zobs = 0.1
     >>> sm_disk, sm_bulge = disk_in_situ_bulge_ex_situ_decomposition(sfr_history, merger_history, cosmic_age_array, zobs)
     """
+    dsm_history = np.insert(np.diff(sm_history), 0, sm_history[:, 0], axis=1)
     sm_decomposition = np.array(
-        disk_in_situ_bulge_ex_situ_engine(sfr_history, merger_history, cosmic_age_array, zobs))
+        disk_in_situ_bulge_ex_situ_engine(sfr_history, dsm_history, cosmic_age_array, zobs))
     sm_disk, sm_bulge = sm_decomposition[:, 0], sm_decomposition[:, 1]
     return sm_disk, sm_bulge
 
