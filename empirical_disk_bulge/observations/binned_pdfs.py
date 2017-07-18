@@ -4,6 +4,10 @@ import numpy as np
 from scipy.stats import norm
 
 
+__all__ = ('gaussian_kernel_selection', 'bt_pdf_fixed_sm', 'bt_pdf_fixed_sm_ssfr',
+        'sfr_sequence_bulge_disk_fractions_vs_sm', 'bulge_disk_fractions_vs_sm')
+
+
 def gaussian_kernel_selection(x, mu, sigma):
     """ Probability that a point ``x`` should be selected according to
     a Gaussian kernel with input mean ``mu`` and width ``sigma``.
@@ -74,7 +78,7 @@ def bulge_disk_fractions_vs_sm(bt, sm, sm_abscissa, domination_vals, sigma_sm):
     return frac_disk_dom, frac_bulge_dom
 
 
-def sfr_sequence_bt_classification_vs_sm(bt, sm, ssfr,
+def sfr_sequence_bulge_disk_fractions_vs_sm(bt, sm, ssfr,
             sm_abscissa=np.arange(9.75, 11.35, 0.1), domination_vals=(0.25, 0.75),
             sigma_sm=0.1, gv_range=(-11.25, -10.75)):
     """
