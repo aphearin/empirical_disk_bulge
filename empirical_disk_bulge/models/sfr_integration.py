@@ -3,6 +3,8 @@
 import os
 import numpy as np
 
+__all__ = ('in_situ_stellar_mass', 'calculate_merger_histories', )
+
 
 def _cosmic_age_array_midpoints(arr):
     midpoints = 0.5*(arr[:-1] + arr[1:])
@@ -96,6 +98,18 @@ def in_situ_fraction(sfr_history, sm_mp_history, redshift, cosmic_age_array, ker
     mask = total_sm > 0.
     result[mask] = in_situ_sm[mask]/total_sm[mask]
     return result
+
+
+def calculate_merger_histories(sfr_history, sm_history, cosmic_age_array):
+    """
+    """
+    in_situ_sm_history = list(in_situ_stellar_mass(sfr_history, cosmic_age_array, t)
+            for t in cosmic_age_array[1:])
+    in_situ_sm_history.insert(0, sm_history[:, 0])
+
+    merger_history = (sm_history - np.transpose(in_situ_sm_history))
+    merger_history = np.where(merger_history < 0, 0, merger_history)
+    return merger_history
 
 
 def _largest_midpoint_index(t, cosmic_age_midpoints):
