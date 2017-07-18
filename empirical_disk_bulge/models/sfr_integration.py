@@ -92,8 +92,8 @@ def in_situ_fraction(sfr_history, sm_mp_history, redshift, cosmic_age_array, ker
     a = 1./(1. + redshift)
     t = np.interp(a, bolplanck_scale_factors, cosmic_age_array)
 
-    in_situ_sm = in_situ_stellar_mass(sfr_history, t, kernel=kernel)
-    total_sm = stellar_mass_interpolation(sm_mp_history, t)
+    in_situ_sm = in_situ_stellar_mass(sfr_history, cosmic_age_array, t, kernel=kernel)
+    total_sm = stellar_mass_interpolation(sm_mp_history, t, cosmic_age_array)
     result = np.zeros_like(total_sm) + np.nan
     mask = total_sm > 0.
     result[mask] = in_situ_sm[mask]/total_sm[mask]
