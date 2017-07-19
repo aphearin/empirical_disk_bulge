@@ -1,12 +1,13 @@
 """
 """
 import numpy as np
-from .engines import constant_disruption_engine
+from .engines import random_constant_disruption_engine
 
-__all__ = ('constant_disruption', )
+__all__ = ('random_constant_disruption', )
 
 
-def constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs):
+def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
+        disruption_prob, frac_migration):
     """
     Examples
     --------
@@ -15,11 +16,13 @@ def constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs):
     >>> merger_history = np.random.random((ngals, ntimes))
     >>> cosmic_age_array = np.linspace(0.1, 14, ntimes)
     >>> zobs = 0.1
-    >>> sm_disk, sm_bulge = constant_disruption(sfr_history, merger_history, cosmic_age_array, zobs)
+    >>> disruption_prob, frac_migration = 0.02, 0.25
+    >>> sm_disk, sm_bulge = random_constant_disruption(sfr_history, merger_history, cosmic_age_array, zobs, disruption_prob, frac_migration)
     """
     dsm_history = np.insert(np.diff(sm_history), 0, sm_history[:, 0], axis=1)
     disk_bulge_result = np.array(
-        constant_disruption_engine(sfr_history, dsm_history, cosmic_age_array, zobs))
+        random_constant_disruption_engine(sfr_history, dsm_history, cosmic_age_array, zobs,
+                        disruption_prob, frac_migration))
     sm_disk, sm_bulge = disk_bulge_result[:, 0], disk_bulge_result[:, 1]
     return sm_disk, sm_bulge
 
