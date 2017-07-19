@@ -1,1 +1,2 @@
 from .disk_in_situ_bulge_ex_situ_model import disk_in_situ_bulge_ex_situ_decomposition
+from .simple_disruption_models import random_constant_disruption
