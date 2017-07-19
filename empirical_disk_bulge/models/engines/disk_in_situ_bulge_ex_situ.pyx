@@ -60,8 +60,8 @@ def disk_in_situ_bulge_ex_situ_engine(double[:, :] in_situ_sfr_history,
             sm_disk += in_situ_dsm*frac_remaining
 
             #  Add all mergers into the bulge
-            dsm_mergers = c_fmax(0., dsm_main_prog[igal, itime] - in_situ_dsm)
-            sm_bulge += dsm_mergers*frac_remaining
+            dsm_mergers = dsm_main_prog[igal, itime] - in_situ_dsm
+            sm_bulge += c_fmax(0., dsm_mergers*frac_remaining)
 
         #  Update the output arrays before moving on to the next galaxy
         disk_bulge_result[igal, 0] = sm_disk
