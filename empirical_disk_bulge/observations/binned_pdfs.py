@@ -82,7 +82,7 @@ def bulge_disk_fractions_vs_sm(bt, sm, sm_abscissa, domination_vals, sigma_sm):
 
 def sfr_sequence_bulge_disk_fractions_vs_sm(bt, sm, ssfr,
             sm_abscissa=np.arange(9.75, 11.35, 0.1), domination_vals=(0.25, 0.75),
-            sigma_sm=0.1, gv_range=(-11.25, -10.75)):
+            sigma_sm=0.1, gv_range=(-11.25, -10.75), return_data_vector=False):
     """
     """
     sfs_range = (gv_range[1], np.inf)
@@ -111,7 +111,21 @@ def sfr_sequence_bulge_disk_fractions_vs_sm(bt, sm, ssfr,
     frac_disk_dom_q, frac_bulge_dom_q = bulge_disk_fractions_vs_sm(
             q_bt, q_sm, sm_abscissa, domination_vals, sigma_sm)
 
-    return (sm_abscissa, frac_disk_dom_all, frac_bulge_dom_all,
+    result = (sm_abscissa, frac_disk_dom_all, frac_bulge_dom_all,
             frac_disk_dom_sfs, frac_bulge_dom_sfs,
             frac_disk_dom_gv, frac_bulge_dom_gv,
             frac_disk_dom_q, frac_bulge_dom_q)
+
+    if return_data_vector:
+        num_sm_bins = len(sm_abscissa)
+        num_distributions = 6
+        assert num_distributions == len(result) - 3, "inconsistency in handling data vector bundling"
+        num_bins_total = num_sm_bins*num_distributions
+        data_vector = np.zeros(num_bins_total)
+        for i in range(num_distributions):
+            ifirst, ilast = i*num_sm_bins, (i+1)*num_sm_bins
+            data_vector[ifirst:ilast] = result[i+3]
+        return data_vector
+    else:
+        return result
+
