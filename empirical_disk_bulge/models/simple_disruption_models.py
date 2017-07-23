@@ -3,7 +3,7 @@
 import numpy as np
 from .engines import random_constant_disruption_engine, simple_disruption_engine
 
-__all__ = ('random_constant_disruption', 'time_dependent_disruption')
+__all__ = ('random_constant_disruption', 'time_dependent_disruption', 'ssfr_dependent_disruption')
 
 
 def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
@@ -80,11 +80,28 @@ def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
     return sm_disk, sm_bulge
 
 
-# def mass_dependent_disruption(num_times, logmass_array, **kwargs):
-#     """
-#     """
-#     logm1, logm2 = kwargs.get('logm1', 10), kwargs.get('logm2', 14)
-#     probm1, probm2 = kwargs.get('probm1', 10), kwargs.get('probm2', 14)
-#     prob_array = np.interp(logmass_array, [logm1, logm2], [probm1, probm2])
-#     num_gals = len(logmass_array)
-#     return np.repeat(prob_array, num_times).reshape((num_gals, num_times))
+def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
+        frac_migration, prob1, prob2, ssfr1=9, ssfr2=11.25):
+    """
+    Examples
+    --------
+    >>> ngals, ntimes = 100, 178
+    >>> sfr_history = np.random.random((ngals, ntimes))
+    >>> sm_history = np.random.random((ngals, ntimes))
+    >>> cosmic_age_array = np.linspace(0.1, 14, ntimes)
+    >>> zobs = 0.1
+    >>> frac_migration = 0.25
+    >>> prob1, prob2 = 0.05, 0.01
+    >>> sm_disk, sm_bulge = ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs, frac_migration, prob1, prob2)
+    """
+    ssfr_history = np.where(sm_history == 0, -np.inf, sfr_history/sm_history)
+    prob_disrupt_history = np.interp(ssfr_history, [ssfr1, ssfr2], [prob1, prob2])
+
+    dsm_history = np.insert(np.diff(sm_history), 0, sm_history[:, 0], axis=1)
+
+    disk_bulge_result = np.array(
+        simple_disruption_engine(sfr_history, dsm_history, prob_disrupt_history,
+                cosmic_age_array, zobs, frac_migration))
+    sm_disk, sm_bulge = disk_bulge_result[:, 0], disk_bulge_result[:, 1]
+    return sm_disk, sm_bulge
+
