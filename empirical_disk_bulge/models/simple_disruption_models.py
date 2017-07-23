@@ -27,22 +27,15 @@ def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
     return sm_disk, sm_bulge
 
 
-# def constant_disruption(num_gals, num_snapshots, **kwargs):
-#     """
-#     """
-#     constant_disruption_prob = kwargs.get('constant_disruption_prob', 0.)
-#     return np.zeros((num_gals, num_snapshots), dtype='f8') + constant_disruption_prob
+def time_dependent_disruption(num_gals, time_array, **kwargs):
+    """
+    """
+    t1, t2 = kwargs.get('t1', 10), kwargs.get('t2', 14)
+    probt1, probt2 = kwargs.get('probt1', 10), kwargs.get('probt2', 14)
 
-
-# def time_dependent_disruption(num_gals, time_array, **kwargs):
-#     """
-#     """
-#     t1, t2 = kwargs.get('t1', 10), kwargs.get('t2', 14)
-#     probt1, probt2 = kwargs.get('probt1', 10), kwargs.get('probt2', 14)
-
-#     prob_array = np.array([np.interp(t, [t1, t2], [probt1, probt2]) for t in time_array])
-#     num_times = len(time_array)
-#     return np.tile(prob_array, num_gals).reshape((num_gals, num_times))
+    prob_array = np.array([np.interp(t, [t1, t2], [probt1, probt2]) for t in time_array])
+    num_times = len(time_array)
+    return np.tile(prob_array, num_gals).reshape((num_gals, num_times))
 
 
 # def mass_dependent_disruption(num_times, logmass_array, **kwargs):
