@@ -21,8 +21,8 @@ __all__ = ('simple_disruption_engine', )
 @cython.wraparound(False)
 @cython.nonecheck(False)
 def simple_disruption_engine(double[:, :] in_situ_sfr_history,
-        double[:, :] dsm_main_prog, cosmic_age_array, redshift_obs,
-        double disruption_prob, double frac_migration):
+        double[:, :] dsm_main_prog, double[:, :] prob_disrupt_history,
+        cosmic_age_array, redshift_obs, double frac_migration):
     """
     """
     #  dt_arr stores the array of time steps
@@ -47,6 +47,7 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
     #  Declare variables needed by the model
     cdef double merging_dsm, in_situ_dsm
 
+
     #  Outer loop is over rows, one for each galaxy in the mock
     for igal in range(num_gals):
         sm_bulge = 0.
@@ -70,7 +71,7 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
             sm_bulge += c_fmax(0., dsm_mergers*frac_remaining)
 
             #  Disrupt the disk according to the input probability
-            if random_uniform() < disruption_prob*dt:
+            if random_uniform() < prob_disrupt_history[igal, itime]*dt:
                 disk_to_bulge_migration_mass = frac_migration*sm_disk
                 sm_bulge += disk_to_bulge_migration_mass
                 sm_disk -= disk_to_bulge_migration_mass
