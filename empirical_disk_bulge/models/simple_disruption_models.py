@@ -81,7 +81,7 @@ def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
 
 
 def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, ssfr1=9, ssfr2=11.25):
+        frac_migration, prob1, prob2, ssfr1=-9, ssfr2=-11.25):
     """
     Examples
     --------
