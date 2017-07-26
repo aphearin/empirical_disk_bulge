@@ -81,7 +81,7 @@ def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
 
 
 def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, ssfr1=-9, ssfr2=-11.25):
+        frac_migration, prob1, prob2, ssfr1=-11.25, ssfr2=-9.):
     """
     Examples
     --------
@@ -94,7 +94,7 @@ def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
     >>> prob1, prob2 = 0.05, 0.01
     >>> sm_disk, sm_bulge = ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs, frac_migration, prob1, prob2)
     """
-    ssfr_history = np.where(sm_history == 0, -np.inf, sfr_history/sm_history)
+    ssfr_history = np.where(sm_history == 0, -np.inf, np.log10(sfr_history/sm_history))
     prob_disrupt_history = np.interp(ssfr_history, [ssfr1, ssfr2], [prob1, prob2])
 
     dsm_history = np.insert(np.diff(sm_history), 0, sm_history[:, 0], axis=1)
