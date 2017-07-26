@@ -28,7 +28,7 @@ def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
 
 
 def time_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, t1=1.5, t2=13.8):
+        frac_migration, prob1, prob2, t1=1.5, t2=13.8, return_disruption_history=False):
     """
     Examples
     --------
@@ -48,11 +48,18 @@ def time_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
 
     dsm_history = np.insert(np.diff(sm_history), 0, sm_history[:, 0], axis=1)
 
-    disk_bulge_result = np.array(
-        simple_disruption_engine(sfr_history, dsm_history, prob_disrupt_history,
-                cosmic_age_array, zobs, frac_migration))
-    sm_disk, sm_bulge = disk_bulge_result[:, 0], disk_bulge_result[:, 1]
-    return sm_disk, sm_bulge
+    _engine_output = simple_disruption_engine(sfr_history, dsm_history, prob_disrupt_history,
+                cosmic_age_array, zobs, frac_migration,
+                return_disruption_history=return_disruption_history)
+    if return_disruption_history:
+        disk_bulge_decomposition, disruption_history = _engine_output
+        disk_bulge_array = np.array(disk_bulge_decomposition)
+        sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
+        return sm_disk, sm_bulge, np.array(disruption_history)
+    else:
+        disk_bulge_array = np.array(_engine_output)
+        sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
+        return sm_disk, sm_bulge
 
 
 def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
@@ -81,7 +88,7 @@ def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
 
 
 def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, ssfr1=-11.25, ssfr2=-9.):
+        frac_migration, prob1, prob2, ssfr1=-11.25, ssfr2=-9., return_disruption_history=False):
     """
     Examples
     --------
@@ -99,9 +106,17 @@ def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
 
     dsm_history = np.insert(np.diff(sm_history), 0, sm_history[:, 0], axis=1)
 
-    disk_bulge_result = np.array(
-        simple_disruption_engine(sfr_history, dsm_history, prob_disrupt_history,
-                cosmic_age_array, zobs, frac_migration))
-    sm_disk, sm_bulge = disk_bulge_result[:, 0], disk_bulge_result[:, 1]
-    return sm_disk, sm_bulge
+    _engine_output = simple_disruption_engine(sfr_history, dsm_history, prob_disrupt_history,
+                cosmic_age_array, zobs, frac_migration,
+                return_disruption_history=return_disruption_history)
+
+    if return_disruption_history:
+        disk_bulge_decomposition, disruption_history = _engine_output
+        disk_bulge_array = np.array(disk_bulge_decomposition)
+        sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
+        return sm_disk, sm_bulge, np.array(disruption_history)
+    else:
+        disk_bulge_array = np.array(_engine_output)
+        sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
+        return sm_disk, sm_bulge
 

@@ -22,7 +22,8 @@ __all__ = ('simple_disruption_engine', )
 @cython.nonecheck(False)
 def simple_disruption_engine(double[:, :] in_situ_sfr_history,
         double[:, :] dsm_main_prog, double[:, :] prob_disrupt_history,
-        cosmic_age_array, redshift_obs, double frac_migration):
+        cosmic_age_array, redshift_obs, double frac_migration,
+        return_disruption_history=False):
     """
     """
     #  dt_arr stores the array of time steps
@@ -41,6 +42,7 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
 
     #  Declare output array and loop variables
     cdef double[:, :] disk_bulge_result = np.zeros((num_gals, 2), dtype='f8', order='C')
+    cdef double[:, :] disruption_history = np.zeros_like(in_situ_sfr_history, dtype='f8', order='C')
     cdef double sm_bulge, sm_disk, dsm_mergers
     cdef int igal, itime
 
@@ -75,10 +77,14 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
                 disk_to_bulge_migration_mass = frac_migration*sm_disk
                 sm_bulge += disk_to_bulge_migration_mass
                 sm_disk -= disk_to_bulge_migration_mass
+                disruption_history[igal, itime] = disk_to_bulge_migration_mass
 
 
         #  Update the output arrays before moving on to the next galaxy
         disk_bulge_result[igal, 0] = sm_disk
         disk_bulge_result[igal, 1] = sm_bulge
 
-    return disk_bulge_result
+    if return_disruption_history:
+        return disk_bulge_result, disruption_history
+    else:
+        return disk_bulge_result
