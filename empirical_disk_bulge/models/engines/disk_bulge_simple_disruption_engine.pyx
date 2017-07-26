@@ -23,7 +23,7 @@ __all__ = ('simple_disruption_engine', )
 def simple_disruption_engine(double[:, :] in_situ_sfr_history,
         double[:, :] dsm_main_prog, double[:, :] prob_disrupt_history,
         cosmic_age_array, redshift_obs, double frac_migration,
-        return_disruption_history=False, percentile_history=None):
+        return_disruption_history=False):
     """
     """
     #  dt_arr stores the array of time steps
@@ -36,10 +36,6 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
     cdef double[:] frac_remaining_arr = np.array(_frac_remaining, dtype='f8', order='C')
     cdef double frac_remaining
 
-    cdef double[:, :] c_percentile_history = np.zeros_like(in_situ_sfr_history)
-    if percentile_history is not None:
-        c_percentile_history[:, :] = percentile_history[:, :]
-
     #  Determine shape of the star-formation histories
     cdef int num_gals = in_situ_sfr_history.shape[0]
     cdef int num_time_steps = in_situ_sfr_history.shape[1]
@@ -51,8 +47,7 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
     cdef int igal, itime
 
     #  Declare variables needed by the model
-    cdef double merging_dsm, in_situ_dsm, uran
-    cdef bint input_percentile_history = percentile_history==None
+    cdef double merging_dsm, in_situ_dsm
 
 
     #  Outer loop is over rows, one for each galaxy in the mock
@@ -78,11 +73,7 @@ def simple_disruption_engine(double[:, :] in_situ_sfr_history,
             sm_bulge += c_fmax(0., dsm_mergers*frac_remaining)
 
             #  Disrupt the disk according to the input probability
-            if input_percentile_history:
-                uran = c_percentile_history[igal, itime]
-            else:
-                uran = random_uniform()
-            if uran < prob_disrupt_history[igal, itime]*dt:
+            if random_uniform() < prob_disrupt_history[igal, itime]*dt:
                 disk_to_bulge_migration_mass = frac_migration*sm_disk
                 sm_bulge += disk_to_bulge_migration_mass
                 sm_disk -= disk_to_bulge_migration_mass
