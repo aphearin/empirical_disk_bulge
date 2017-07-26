@@ -5,7 +5,8 @@ from scipy.special import erf
 
 from .engines import random_constant_disruption_engine, simple_disruption_engine
 
-__all__ = ('random_constant_disruption', 'time_dependent_disruption', 'ssfr_dependent_disruption')
+__all__ = ('random_constant_disruption', 'time_dependent_disruption',
+    'ssfr_dependent_disruption', 'delta_vmax_driven_disruption')
 
 
 def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
@@ -127,7 +128,7 @@ def _zscore_to_percentile(z):
     return 0.5*(1 + erf(z/np.sqrt(2)))
 
 
-def delta_vmax_dependent_disruption(sfr_history, sm_history, dv_zscore_history,
+def delta_vmax_driven_disruption(sfr_history, sm_history, dv_zscore_history,
         cosmic_age_array, zobs, frac_migration, return_disruption_history=False):
     """
     Examples
@@ -139,7 +140,7 @@ def delta_vmax_dependent_disruption(sfr_history, sm_history, dv_zscore_history,
     >>> cosmic_age_array = np.linspace(0.1, 14, ntimes)
     >>> zobs = 0.1
     >>> frac_migration = 0.25
-    >>> sm_disk, sm_bulge = delta_vmax_dependent_disruption(sfr_history, sm_history, dv_zscore_history, cosmic_age_array, zobs, frac_migration)
+    >>> sm_disk, sm_bulge = delta_vmax_driven_disruption(sfr_history, sm_history, dv_zscore_history, cosmic_age_array, zobs, frac_migration)
     """
     prob_disrupt_history = _zscore_to_percentile(dv_zscore_history)
 
