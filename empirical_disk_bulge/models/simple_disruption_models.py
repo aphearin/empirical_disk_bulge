@@ -10,8 +10,16 @@ __all__ = ('random_constant_disruption', 'time_dependent_disruption',
     'ssfr_dependent_disruption', 'merger_triggered_disruption')
 
 
+default_bt_noise = 0.1
+
+
+def _log_noise(x, noise):
+    assert np.all(x >= 0), "Stellar masses cannot be negative"
+    return np.where(x > 0, 10.**np.random.normal(loc=np.log10(x), scale=noise), 0)
+
+
 def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        disruption_prob, frac_migration):
+        disruption_prob, frac_migration, bt_noise=default_bt_noise):
     """
     Examples
     --------
@@ -28,11 +36,12 @@ def random_constant_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
         random_constant_disruption_engine(sfr_history, dsm_history, cosmic_age_array, zobs,
                         disruption_prob, frac_migration))
     sm_disk, sm_bulge = disk_bulge_result[:, 0], disk_bulge_result[:, 1]
-    return sm_disk, sm_bulge
+    return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise)
 
 
 def time_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, t1=1.5, t2=13.8, return_disruption_history=False):
+        frac_migration, prob1, prob2, bt_noise=default_bt_noise,
+        t1=1.5, t2=13.8, return_disruption_history=False):
     """
     Examples
     --------
@@ -59,15 +68,15 @@ def time_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
         disk_bulge_decomposition, disruption_history = _engine_output
         disk_bulge_array = np.array(disk_bulge_decomposition)
         sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
-        return sm_disk, sm_bulge, np.array(disruption_history)
+        return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise), np.array(disruption_history)
     else:
         disk_bulge_array = np.array(_engine_output)
         sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
-        return sm_disk, sm_bulge
+        return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise)
 
 
 def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, logsm1=9, logsm2=11.25):
+        frac_migration, prob1, prob2, bt_noise=default_bt_noise, logsm1=9, logsm2=11.25):
     """
     Examples
     --------
@@ -88,11 +97,12 @@ def sm_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
         simple_disruption_engine(sfr_history, dsm_history, prob_disrupt_history,
                 cosmic_age_array, zobs, frac_migration))
     sm_disk, sm_bulge = disk_bulge_result[:, 0], disk_bulge_result[:, 1]
-    return sm_disk, sm_bulge
+    return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise)
 
 
 def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
-        frac_migration, prob1, prob2, ssfr1=-11.25, ssfr2=-9., return_disruption_history=False):
+        frac_migration, prob1, prob2, bt_noise=default_bt_noise,
+        ssfr1=-11.25, ssfr2=-9., return_disruption_history=False):
     """
     Examples
     --------
@@ -118,11 +128,11 @@ def ssfr_dependent_disruption(sfr_history, sm_history, cosmic_age_array, zobs,
         disk_bulge_decomposition, disruption_history = _engine_output
         disk_bulge_array = np.array(disk_bulge_decomposition)
         sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
-        return sm_disk, sm_bulge, np.array(disruption_history)
+        return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise), np.array(disruption_history)
     else:
         disk_bulge_array = np.array(_engine_output)
         sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
-        return sm_disk, sm_bulge
+        return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise)
 
 
 def _zscore_to_percentile(z):
@@ -130,7 +140,8 @@ def _zscore_to_percentile(z):
 
 
 def merger_triggered_disruption(sfr_history, sm_history, merger_threshold_history,
-        cosmic_age_array, zobs, frac_migration, return_disruption_history=False):
+        cosmic_age_array, zobs, frac_migration, bt_noise=default_bt_noise,
+        return_disruption_history=False):
     """
     Examples
     --------
@@ -155,9 +166,9 @@ def merger_triggered_disruption(sfr_history, sm_history, merger_threshold_histor
         disk_bulge_decomposition, disruption_history = _engine_output
         disk_bulge_array = np.array(disk_bulge_decomposition)
         sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
-        return sm_disk, sm_bulge, np.array(disruption_history)
+        return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise), np.array(disruption_history)
     else:
         disk_bulge_array = np.array(_engine_output)
         sm_disk, sm_bulge = disk_bulge_array[:, 0], disk_bulge_array[:, 1]
-        return sm_disk, sm_bulge
+        return _log_noise(sm_disk, bt_noise), _log_noise(sm_bulge, bt_noise)
 
