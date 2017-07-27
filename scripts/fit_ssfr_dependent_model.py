@@ -109,6 +109,7 @@ header = "prob1_disrupt  prob2_disrupt frac_migration  lnprob\n"
 
 start = time()
 
+print("...Running MCMC with {0} chain elements".format(args.num_iteration*nwalkers))
 with open(outname, "wb") as f:
     f.write(header)
     for result in sampler.sample(pos0, iterations=args.num_iteration, storechain=False):
@@ -117,10 +118,8 @@ with open(outname, "wb") as f:
             newline = formatter.format(*np.append(a, b))
             f.write(newline)
 end = time()
-print("Runtime for MCMC with {0} chain elements = {1:.2f} minutes".format(
-    args.num_iteration*nwalkers, (end-start)/60.))
-
-
+print("Runtime for MCMC = {0:.2f} minutes".format((end-start)/60.))
+print("\a\a\a")
 
 from astropy.table import Table
 chain = Table.read(outname, format='ascii')
